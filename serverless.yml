@@ -1,0 +1,53 @@
+service: serverless-playground
+
+frameworkVersion: '3'
+
+configValidationMode: error
+
+plugins:
+  - serverless-esbuild
+
+params:
+  default:
+    logRetentionInDays: 7
+    origins: '*'
+    tags:
+      App: serverless.playground
+      Env: ${sls:stage}
+      OU: leanstacks
+      Owner: Matthew Warman
+  dev:
+    profile: ls-dev
+  qa:
+    origins: '*'
+    profile: ls-qa
+  prod:
+    logRetentionInDays: 30
+    origins: '*'
+    profile: leanstacks
+
+provider:
+  name: aws
+  region: us-east-1
+  runtime: nodejs20.x
+  memorySize: 1024
+  timeout: 6
+  logRetentionInDays: ${param:logRetentionInDays}
+  tags: ${param:tags}
+  stackTags: ${param:tags}
+  environment:
+    ALLOW_ORIGIN: ${param:origins}
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+
+functions:
+  ping:
+    handler: src/handlers/ping/index.handle
+    events:
+      - http:
+          path: /ping
+          method: get
+          cors:
+            origin: ${param:origins}
+
+resources:
+  Description: Serverless Framework Playground service component

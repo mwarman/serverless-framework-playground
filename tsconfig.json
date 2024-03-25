@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "paths": {
+      "@fixtures/*":["./src/__fixtures__/*"],
+      "@errors/*": ["./src/errors/*"],
+      "@handlers/*": ["./src/handlers/*"],
+      "@middleware/*": ["./src/middleware/*"],
+      "@models/*": ["./src/models/*"],
+      "@services/*": ["./src/services/*"],
+      "@utils/*": ["./src/utils/*"]
+    },
+    "removeComments": true,
+    "sourceMap": true,
+    "target": "ES2020",
+    "outDir": "lib"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "node_modules/**/*",
+    ".serverless/**/*",
+    ".webpack/**/*",
+    "_warmup/**/*",
+    ".vscode/**/*"
+  ]
+}
