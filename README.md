@@ -4,6 +4,15 @@ This project has been generated using the `aws-nodejs-typescript` template from 
 
 For detailed instructions, please refer to the [documentation](https://www.serverless.com/framework/docs/providers/aws/).
 
+## Experiment
+
+**Use AWS AppConfig feature flags in a Lambda function.**
+
+- Grant permissions to the Lambda function in `serverless.yml`
+- Add the AWS AppConfig Agent Lambda extension as a Layer in `serverless.yml`
+- Optional. Add the AWS AppConfig environment configuration in `serverless.yml`
+- Retrieve the values for one or more feature flags in the `AppConfigService` module
+
 ## Installation/deployment instructions
 
 Depending on your preferred package manager, follow the instructions below to deploy your project.
