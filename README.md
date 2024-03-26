@@ -261,7 +261,7 @@ Stack Outputs:
   ServerlessDeploymentBucketName: serverless-playground-dev-serverlessdeploymentbuck-ds5ljwiarqvr
 ```
 
-> **TIP**: Use the **Service Endpoint** from the stack outputs to test the deployed service.
+> **TIP**: Use the **Endpoint** from the stack outputs to test the deployed service.
 
 ### Test the service
 
