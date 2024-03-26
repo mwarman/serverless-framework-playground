@@ -173,25 +173,153 @@ export const getFlag = async (flagKey: string): Promise<FeatureFlag> => {
 };
 ```
 
+### Example feature flag responses
+
+#### Single flag
+
+When a single feature flag is requested from AWS AppConfig, the response is structured as illustrated below.
+
+```ts
+{
+  "enabled": true
+}
+```
+
+When multiple feature flags are requested, the response is structured as illustrated below.
+
+```ts
+{
+  "release-api-feature-alpha": {
+      "enabled": true
+  },
+  "release-api-feature-bravo": {
+      "enabled": false
+  }
+}
+```
+
+The application logic within this experiment transforms the responses to the `FeatureFlag` type as illustrated below.
+
+```ts
+[
+  {
+    key: 'release-api-feature-alpha',
+    enabled: true,
+  },
+  {
+    key: 'release-api-feature-bravo',
+    enabled: false,
+  },
+];
+```
+
 ## Installation/deployment instructions
 
-Depending on your preferred package manager, follow the instructions below to deploy your project.
+Follow the instructions below to deploy the project.
 
 > **Requirements**: NodeJS `lts/iron (v.20.11.1)`. If you're using [nvm](https://github.com/nvm-sh/nvm), run `nvm use` to ensure you're using the same Node version in local and in your lambda's runtime.
 
-### Using NPM
+### Deploy the service
 
 - Run `npm i` to install the project dependencies
-- Run `npx sls deploy` to deploy this stack to AWS
+- Run `npm run deploy` to deploy this stack to AWS
 
-## Test your service
+> **NOTE**: Deployment to AWS requires an AWS Account and credentials.
+
+```
+npm run deploy
+
+OR with a named AWS profile
+
+npm run deploy -- --aws-profile <profileName>
+```
+
+The following is an example of the command output:
+
+```> serverless-playground@1.0.0 deploy
+> sls deploy --verbose --aws-profile ls-dev
+
+
+Deploying serverless-playground to stage dev (us-east-1)
+
+Packaging
+Zip service serverless-playground - 92.88 KB [26 ms]
+Creating CloudFormation stack
+Executing created change set
+Retrieving CloudFormation stack
+Removing old service artifacts from S3
+
+✔ Service deployed to stack serverless-playground-dev (96s)
+
+endpoint: GET - https://0f7hzpsohh.execute-api.us-east-1.amazonaws.com/dev/ping
+functions:
+  ping: serverless-playground-dev-ping (95 kB)
+
+Stack Outputs:
+  PingLambdaFunctionQualifiedArn: arn:aws:lambda:us-east-1:988218269141:function:serverless-playground-dev-ping:13
+  ServiceEndpoint: https://0f7hzpsohh.execute-api.us-east-1.amazonaws.com/dev
+  ServerlessDeploymentBucketName: serverless-playground-dev-serverlessdeploymentbuck-ds5ljwiarqvr
+```
+
+> **TIP**: Use the **Service Endpoint** from the stack outputs to test the deployed service.
+
+### Test the service
 
 This template contains a single lambda function triggered by an HTTP request made on the provisioned API Gateway REST API `/ping` route with `GET` method.
 
-### Remotely
+#### Testing Remotely
 
 Copy and replace your `url` - found in Serverless `deploy` command output - and `name` parameter in the following `curl` command in your terminal or in Postman to test your newly deployed application.
 
 ```
-curl 'https://myApiEndpoint/dev/ping' \
+curl 'https://myApiEndpoint/dev/ping'
+```
+
+### Clean up the resources
+
+To remove the deployed service run:
+
+```
+npm run remove
+
+OR with a named AWS profile
+
+npm run remove -- --aws-profile <profileName>
+```
+
+The following is an example of the command output.
+
+```
+> serverless-playground@1.0.0 remove
+> sls remove --verbose --aws-profile my-dev-account
+
+Removing serverless-playground from stage dev (us-east-1)
+
+Removing objects from S3 bucket
+Removing CloudFormation stack
+  DELETE_IN_PROGRESS - AWS::CloudFormation::Stack - serverless-playground-dev
+  DELETE_IN_PROGRESS - AWS::ApiGateway::Deployment - ApiGatewayDeployment1711451583746
+  DELETE_IN_PROGRESS - AWS::S3::BucketPolicy - ServerlessDeploymentBucketPolicy
+  DELETE_SKIPPED - AWS::Lambda::Version - PingLambdaVersionytqOqx8zLyCee3AmyauOHz0KxMfzecZmZIz01Dm2W3A
+  DELETE_COMPLETE - AWS::S3::BucketPolicy - ServerlessDeploymentBucketPolicy
+  DELETE_COMPLETE - AWS::ApiGateway::Deployment - ApiGatewayDeployment1711451583746
+  DELETE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodPingGet
+  DELETE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodPingOptions
+  DELETE_COMPLETE - AWS::ApiGateway::Method - ApiGatewayMethodPingGet
+  DELETE_COMPLETE - AWS::ApiGateway::Method - ApiGatewayMethodPingOptions
+  DELETE_IN_PROGRESS - AWS::Lambda::Permission - PingLambdaPermissionApiGateway
+  DELETE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourcePing
+  DELETE_COMPLETE - AWS::Lambda::Permission - PingLambdaPermissionApiGateway
+  DELETE_IN_PROGRESS - AWS::Lambda::Function - PingLambdaFunction
+  DELETE_COMPLETE - AWS::ApiGateway::Resource - ApiGatewayResourcePing
+  DELETE_IN_PROGRESS - AWS::ApiGateway::RestApi - ApiGatewayRestApi
+  DELETE_COMPLETE - AWS::ApiGateway::RestApi - ApiGatewayRestApi
+  DELETE_COMPLETE - AWS::Lambda::Function - PingLambdaFunction
+  DELETE_IN_PROGRESS - AWS::S3::Bucket - ServerlessDeploymentBucket
+  DELETE_IN_PROGRESS - AWS::IAM::Role - IamRoleLambdaExecution
+  DELETE_IN_PROGRESS - AWS::Logs::LogGroup - PingLogGroup
+  DELETE_COMPLETE - AWS::Logs::LogGroup - PingLogGroup
+  DELETE_COMPLETE - AWS::S3::Bucket - ServerlessDeploymentBucket
+
+✔ Service serverless-playground has been successfully removed (27s)
 ```
