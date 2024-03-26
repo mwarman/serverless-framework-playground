@@ -23,6 +23,7 @@ export const handler = async (
   // Fetch a single FeatureFlag
   const singleFlag: FeatureFlag = await AppConfigService.getFlag('release-api-feature');
   console.log(`singleFlag::${JSON.stringify(singleFlag)}`);
+  console.log(`singleFlag::stringAttribute::${singleFlag.attributes?.stringAttribute}`);
 
   // Fetch multiple FeatureFlags
   const multipleFlags: FeatureFlag[] = await AppConfigService.getFlags([

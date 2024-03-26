@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { FeatureFlag } from '@models/featureflag';
+import { FeatureFlagResponse } from '@models/featureflag';
 import {
   AWS_APPCONFIG_APP_ID,
   AWS_APPCONFIG_ENV_ID,
@@ -19,10 +19,11 @@ import {
 export const isFlagEnabled = async (flagKey: string): Promise<boolean> => {
   try {
     console.log(`AppConfigService::isFlagEnabled::key::${flagKey}`);
+    // fetch the feature flag configuration data
     const url = `http://localhost:2772/applications/${AWS_APPCONFIG_APP_ID}/environments/${AWS_APPCONFIG_ENV_ID}/configurations/${AWS_APPCONFIG_PROFILE_ID}?flag=${flagKey}`;
     console.log(`AppConfigService::url::${url}`);
 
-    const response = await axios.request<FeatureFlag>({
+    const response = await axios.request<FeatureFlagResponse>({
       url,
     });
     console.log(`AppConfigService::response::${JSON.stringify(response.data)}`);
