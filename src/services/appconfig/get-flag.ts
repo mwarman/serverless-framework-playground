@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { AWS_APPCONFIG_APP_ID, AWS_APPCONFIG_ENV_ID } from '@utils/config';
+import { FeatureFlag } from '@models/featureflag';
 
 /**
  * Retrieves a single `FeatureFlag` by the flag `key`.
@@ -10,14 +11,17 @@ import { AWS_APPCONFIG_APP_ID, AWS_APPCONFIG_ENV_ID } from '@utils/config';
  * @throws Throws an `Error` when a failure occurs fetching the feature
  * flag.
  */
-export const getFlag = async (configId: string, flagKey: string): Promise<any> => {
+export const getFlag = async <TAttr = unknown>(
+  configId: string,
+  flagKey: string,
+): Promise<FeatureFlag<TAttr>> => {
   try {
     console.log(`AppConfigService::getFlag::${JSON.stringify({ configId, flagKey })}`);
     // fetch the feature flag
     const url = `http://localhost:2772/applications/${AWS_APPCONFIG_APP_ID}/environments/${AWS_APPCONFIG_ENV_ID}/configurations/${configId}?flag=${flagKey}`;
     console.log(`AppConfigService::url::${url}`);
 
-    const response = await axios.request<any>({
+    const response = await axios.request<FeatureFlag<TAttr>>({
       url,
     });
     console.log(`AppConfigService::response::${JSON.stringify(response.data)}`);

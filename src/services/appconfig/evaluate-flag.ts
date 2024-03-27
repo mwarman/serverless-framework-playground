@@ -1,4 +1,4 @@
-import { FeatureFlagEvaluationContext } from '@models/featureflag';
+import { CustomerAttributes, FeatureFlagEvaluationContext } from '@models/featureflag';
 import AppConfigService from '.';
 
 /**
@@ -25,7 +25,7 @@ export const evaluateFlag = async (
     let isEnabled = false;
 
     // fetch the feature flag configuration data
-    const flag = await AppConfigService.getFlag(configId, flagKey);
+    const flag = await AppConfigService.getFlag<CustomerAttributes>(configId, flagKey);
 
     if (flag) {
       // flag found

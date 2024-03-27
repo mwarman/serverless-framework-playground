@@ -1,28 +1,24 @@
 /**
- * Feature flag attribute value types.
- */
-type FeatureFlagAttributeValue = string | string[] | number | number[] | boolean;
-
-/**
- * A `FeatureFlag` object describes an AWS AppConfig feature flag object.
- */
-export type FeatureFlag<TAttr = Record<string, FeatureFlagAttributeValue>> = {
-  key: string;
-  enabled: boolean;
-  attributes?: TAttr;
-};
-
-/**
  * API response when a single AWS AppConfig feature flag is requested.
+ * @template TAttr - The type of the feature flag attributes.
  */
-export type FeatureFlagResponse = Record<string, FeatureFlagAttributeValue> & {
+export type FeatureFlag<TAttr = unknown> = {
   enabled: boolean;
-};
+} & TAttr;
 
 /**
  * API response when multiple AWS AppConfig feature flags are requested.
+ * @template TAttr - The type of the feature flag attributes.
  */
-export type MultiFeatureFlagResponse = Record<string, FeatureFlagResponse>;
+export type MultiFeatureFlag<TAttr = unknown> = Record<string, FeatureFlag<TAttr>>;
+
+/**
+ * API AppConfig feature flag attributes for evaluation of feature flag status
+ * based upon enabled customers.
+ */
+export type CustomerAttributes = {
+  customers?: string[];
+};
 
 /**
  * A `FeatureFlagEvaluationContext` describes attributes considered when
