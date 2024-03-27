@@ -23,7 +23,7 @@ export const getConfiguration = async (configId: string): Promise<any> => {
 
     return response.data;
   } catch (err) {
-    console.error(`AppConfigService::error::Failed to fetch AppConfig data.`, err);
-    throw err;
+    console.error(`AppConfigService::error::Failed to fetch configuration.`, err);
+    return null;
   }
 };

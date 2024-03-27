@@ -12,9 +12,7 @@ params:
     appConfigAppId: ak00b6h
     appConfigEnvId: gbw62l2
     appConfigProfileId: oakibs7
-    appConfigFreeformProfileId: wmlda2c
     logRetentionInDays: 7
-    origins: '*'
     tags:
       App: serverless.playground
       Env: ${sls:stage}
@@ -23,11 +21,9 @@ params:
   dev:
     profile: ls-dev
   qa:
-    origins: '*'
     profile: ls-qa
   prod:
     logRetentionInDays: 30
-    origins: '*'
     profile: leanstacks
 
 provider:
@@ -39,6 +35,8 @@ provider:
   logRetentionInDays: ${param:logRetentionInDays}
   tags: ${param:tags}
   stackTags: ${param:tags}
+  layers:
+    - arn:aws:lambda:us-east-1:027255383542:layer:AWS-AppConfig-Extension:128
   iam:
     role:
       statements:
@@ -48,26 +46,30 @@ provider:
             - appconfig:GetLatestConfiguration
           Resource:
             - arn:aws:appconfig:${aws:region}:${aws:accountId}:application/${param:appConfigAppId}/environment/${param:appConfigEnvId}/configuration/${param:appConfigProfileId}
-            - arn:aws:appconfig:${aws:region}:${aws:accountId}:application/${param:appConfigAppId}/environment/${param:appConfigEnvId}/configuration/${param:appConfigFreeformProfileId}
   environment:
-    ALLOW_ORIGIN: ${param:origins}
     AWS_APPCONFIG_APP_ID: ${param:appConfigAppId}
     AWS_APPCONFIG_ENV_ID: ${param:appConfigEnvId}
-    AWS_APPCONFIG_PROFILE_ID: ${param:appConfigProfileId}
-    AWS_APPCONFIG_FREEFORM_PROFILE_ID: ${param:appConfigFreeformProfileId}
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
 
 functions:
-  ping:
-    handler: src/handlers/ping/index.handle
-    layers:
-      - arn:aws:lambda:us-east-1:027255383542:layer:AWS-AppConfig-Extension:128
+  findConfig:
+    handler: src/handlers/config-find/index.handle
     events:
       - http:
-          path: /ping
+          path: /configs/{configId}
           method: get
-          cors:
-            origin: ${param:origins}
+  findFlag:
+    handler: src/handlers/flag-find/index.handle
+    events:
+      - http:
+          path: /configs/{configId}/flags/{flagKey}
+          method: get
+  evaluateFlag:
+    handler: src/handlers/flag-evaluate/index.handle
+    events:
+      - http:
+          path: /configs/{configId}/flags/{flagKey}
+          method: post
 
 resources:
   Description: Serverless Framework Playground service component

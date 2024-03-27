@@ -23,3 +23,18 @@ export type FeatureFlagResponse = Record<string, FeatureFlagAttributeValue> & {
  * API response when multiple AWS AppConfig feature flags are requested.
  */
 export type MultiFeatureFlagResponse = Record<string, FeatureFlagResponse>;
+
+/**
+ * A `FeatureFlagEvaluationContext` describes attributes considered when
+ * determining the overall flag state.
+ */
+export type FeatureFlagEvaluationContext = {
+  customerId: string;
+};
+
+/**
+ * Evaluate flag request body.
+ */
+export type EvaluateFlagDTO = {
+  customerId: string;
+};
