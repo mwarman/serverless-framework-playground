@@ -1,6 +1,10 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 
-import { ALLOW_ORIGIN } from '@utils/config';
+import {
+  ALLOW_ORIGIN,
+  AWS_APPCONFIG_PROFILE_ID,
+  AWS_APPCONFIG_FREEFORM_PROFILE_ID,
+} from '@utils/config';
 import { FeatureFlag } from '@models/featureflag';
 import AppConfigService from '@services/appconfig';
 
@@ -35,6 +39,14 @@ export const handler = async (
   // Fetch the state of a FeatureFlag
   const isFlagEnabled = await AppConfigService.isFlagEnabled('release-api-feature');
   console.log(`isFlagEnabled::${isFlagEnabled}`);
+
+  // Fetch a feature flag configuration
+  const featureFlagConfig = await AppConfigService.getConfiguration(AWS_APPCONFIG_PROFILE_ID);
+  console.log(`featureFlagConfig::${JSON.stringify(featureFlagConfig)}`);
+
+  // Fetch a freeform configuration
+  const freeformConfig = await AppConfigService.getConfiguration(AWS_APPCONFIG_FREEFORM_PROFILE_ID);
+  console.log(`freeformConfig::${JSON.stringify(freeformConfig)}`);
 
   const pong = {
     ping: isFlagEnabled ? 'pong' : 'ping',

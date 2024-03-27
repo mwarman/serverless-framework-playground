@@ -12,6 +12,7 @@ params:
     appConfigAppId: ak00b6h
     appConfigEnvId: gbw62l2
     appConfigProfileId: oakibs7
+    appConfigFreeformProfileId: wmlda2c
     logRetentionInDays: 7
     origins: '*'
     tags:
@@ -47,11 +48,13 @@ provider:
             - appconfig:GetLatestConfiguration
           Resource:
             - arn:aws:appconfig:${aws:region}:${aws:accountId}:application/${param:appConfigAppId}/environment/${param:appConfigEnvId}/configuration/${param:appConfigProfileId}
+            - arn:aws:appconfig:${aws:region}:${aws:accountId}:application/${param:appConfigAppId}/environment/${param:appConfigEnvId}/configuration/${param:appConfigFreeformProfileId}
   environment:
     ALLOW_ORIGIN: ${param:origins}
     AWS_APPCONFIG_APP_ID: ${param:appConfigAppId}
     AWS_APPCONFIG_ENV_ID: ${param:appConfigEnvId}
     AWS_APPCONFIG_PROFILE_ID: ${param:appConfigProfileId}
+    AWS_APPCONFIG_FREEFORM_PROFILE_ID: ${param:appConfigFreeformProfileId}
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
 
 functions:

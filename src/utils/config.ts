@@ -15,3 +15,8 @@ export const AWS_APPCONFIG_ENV_ID = process.env.AWS_APPCONFIG_ENV_ID ?? 'env-id'
  * AWS AppConfig profile identifier.
  */
 export const AWS_APPCONFIG_PROFILE_ID = process.env.AWS_APPCONFIG_PROFILE_ID ?? 'profile-id';
+/**
+ * AWS AppConfig freeform profile identifier.
+ */
+export const AWS_APPCONFIG_FREEFORM_PROFILE_ID =
+  process.env.AWS_APPCONFIG_FREEFORM_PROFILE_ID ?? 'freeform-profile-id';
