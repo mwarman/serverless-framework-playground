@@ -103,114 +103,75 @@ The `FeatureFlag` type is defined in [featureflag.ts](./src/models/featureflag.t
 
 ```ts
 /**
- * A `FeatureFlag` object describes an AWS AppConfig feature flag object.
+ * API response when a single AWS AppConfig feature flag is requested.
+ * @template TAttr - The type of the feature flag attributes.
  */
-export type FeatureFlag = {
-  key: string;
+export type FeatureFlag<TAttr = unknown> = {
   enabled: boolean;
-};
+} & TAttr;
 ```
 
-The `handler.ts` excerpt below illustrates the use of three separate `AppConfigService` functions. The first fetches a single `FeatureFlag` using the flag key. The second fetches multiple feature flags. The third fetches a flag and returns its `boolean` state.
+The project contains the `AppConfigService` module which includes functions to:
+
+- fetch an entire configuration profile
+- fetch a single feature flag
+- evaluate the state of a single feature flag, i.e. `true` or `false`, using context attributes
+
+In this example, each feature flag has an optional attribute named `customers` which is a `string[]` containing a list of customer identifiers for whom the flag is enabled. When the `customers` attribute is present on the feature flag, it is used to refine the evaluation of the feature flag.
 
 ```ts
-// Fetch a single FeatureFlag
-const singleFlag: FeatureFlag = await AppConfigService.getFlag('release-api-feature');
-console.log(`singleFlag::${JSON.stringify(singleFlag)}`);
-
-// Fetch multiple FeatureFlags
-const multipleFlags: FeatureFlag[] = await AppConfigService.getFlags([
-  'release-api-feature',
-  'release-ui-feature',
-]);
-console.log(`multipleFlags::${JSON.stringify(multipleFlags)}`);
-
-// Fetch the state of a FeatureFlag
-const isFlagEnabled = await AppConfigService.isFlagEnabled('release-api-feature');
-console.log(`isFlagEnabled::${isFlagEnabled}`);
-```
-
-The `get-flag.ts` excerpt below illustrates the `AppConfigService.getFlag()` function. The AppConfig Lambda extension exposes a simple HTTP API running on `localhost:2772` by default. The extension may be queried for one to many feature flags.
-
-> **NOTE:** The response is formatted differently when querying multiple feature flags.
-
-```ts
-import axios from 'axios';
-
-import { FeatureFlag } from '@models/featureflag';
-import {
-  AWS_APPCONFIG_APP_ID,
-  AWS_APPCONFIG_ENV_ID,
-  AWS_APPCONFIG_PROFILE_ID,
-} from '@utils/config';
+import { CustomerAttributes, FeatureFlagEvaluationContext } from '@models/featureflag';
+import AppConfigService from '.';
 
 /**
- * Retrieves a single `FeatureFlag` by the flag `key`.
+ * Finds a single `FeatureFlag` by the flag `key` and evaluates the overall
+ * flag state using the evaluation context attributes.
+ * @param {string} configId - The configuration profile identifier.
  * @param {string} flagKey - The feature flag key.
- * @returns {Promise<FeatureFlag>} A Promise which resolves to the `FeatureFlag`.
+ * @param {FeatureFlagEvaluationContext} [context] - Optional. An evaluation context.
+ * @returns {Promise<boolean>} A Promise which resolves to the boolean state of
+ * the feature flag.
  * @throws Throws an `Error` when a failure occurs fetching the feature
  * flag.
  */
-export const getFlag = async (flagKey: string): Promise<FeatureFlag> => {
+export const evaluateFlag = async (
+  configId: string,
+  flagKey: string,
+  context?: FeatureFlagEvaluationContext,
+): Promise<boolean> => {
   try {
-    console.log(`AppConfigService::getFlag::key::${flagKey}`);
-    const url = `http://localhost:2772/applications/${AWS_APPCONFIG_APP_ID}/environments/${AWS_APPCONFIG_ENV_ID}/configurations/${AWS_APPCONFIG_PROFILE_ID}?flag=${flagKey}`;
-    console.log(`AppConfigService::url::${url}`);
+    console.log(
+      `AppConfigService::evaluateFlag::${JSON.stringify({ configId, flagKey, context })}`,
+    );
+    // default to disabled
+    let isEnabled = false;
 
-    const response = await axios.request<FeatureFlag>({
-      url,
-    });
-    console.log(`AppConfigService::response::${JSON.stringify(response.data, null, 2)}`);
+    // fetch the feature flag configuration data
+    const flag = await AppConfigService.getFlag<CustomerAttributes>(configId, flagKey);
 
-    return {
-      key: flagKey,
-      enabled: response.data.enabled,
-    };
+    if (flag) {
+      // flag found
+      isEnabled = flag.enabled;
+      if (flag.enabled) {
+        // flag is enabled
+        if (context) {
+          // refine flag status with context attributes
+
+          // customer enabled if flag has no "customers" attribute OR
+          // the "customers" array contains the current customer identifier
+          const isCustomerEnabled = !flag.customers || flag.customers.includes(context.customerId);
+
+          isEnabled = isEnabled && isCustomerEnabled;
+        }
+      }
+    }
+
+    return isEnabled;
   } catch (err) {
-    console.error(`AppConfigService::error::Failed to fetch AppConfig data.`, err);
+    console.error(`AppConfigService::error::Failed to evaluate feature flag ${flagKey}.`, err);
     throw err;
   }
 };
-```
-
-### Example feature flag responses
-
-#### Single flag
-
-When a single feature flag is requested from AWS AppConfig, the response is structured as illustrated below.
-
-```ts
-{
-  "enabled": true
-}
-```
-
-When multiple feature flags are requested, the response is structured as illustrated below.
-
-```ts
-{
-  "release-api-feature-alpha": {
-      "enabled": true
-  },
-  "release-api-feature-bravo": {
-      "enabled": false
-  }
-}
-```
-
-The application logic within this experiment transforms the responses to the `FeatureFlag` type as illustrated below.
-
-```ts
-[
-  {
-    key: 'release-api-feature-alpha',
-    enabled: true,
-  },
-  {
-    key: 'release-api-feature-bravo',
-    enabled: false,
-  },
-];
 ```
 
 ## Installation/deployment instructions
