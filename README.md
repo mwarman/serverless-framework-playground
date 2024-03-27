@@ -109,6 +109,14 @@ The `FeatureFlag` type is defined in [featureflag.ts](./src/models/featureflag.t
 export type FeatureFlag<TAttr = unknown> = {
   enabled: boolean;
 } & TAttr;
+
+/**
+ * API AppConfig feature flag attributes for evaluation of feature flag status
+ * based upon enabled customers.
+ */
+export type CustomerAttributes = {
+  customers?: string[];
+};
 ```
 
 The project contains the `AppConfigService` module which includes functions to:
