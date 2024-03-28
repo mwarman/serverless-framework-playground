@@ -21,8 +21,10 @@ params:
   dev:
     profile: ls-dev
   qa:
+    appConfigEnvId: v855leh
     profile: ls-qa
   prod:
+    appConfigEnvId: nv960l4
     logRetentionInDays: 30
     profile: leanstacks
 
@@ -45,7 +47,7 @@ provider:
             - appconfig:StartConfigurationSession
             - appconfig:GetLatestConfiguration
           Resource:
-            - arn:aws:appconfig:${aws:region}:${aws:accountId}:application/${param:appConfigAppId}/environment/${param:appConfigEnvId}/configuration/${param:appConfigProfileId}
+            - arn:aws:appconfig:${aws:region}:${aws:accountId}:application/${param:appConfigAppId}/environment/${param:appConfigEnvId}/configuration/*
   environment:
     AWS_APPCONFIG_APP_ID: ${param:appConfigAppId}
     AWS_APPCONFIG_ENV_ID: ${param:appConfigEnvId}

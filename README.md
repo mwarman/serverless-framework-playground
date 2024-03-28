@@ -18,7 +18,7 @@ The steps below document the high-level process to use AWS AppConfig in a Lambda
 
 ### Step One: Grant permissions to the Lambda function
 
-In the Serverless Framework specification, `serverless.yml`, grant permission to the Lambda execution role to access specific AWS AppConfig data. The `serverless.yml` excerpt below illustrates the IAM role statements required to start a secure AWS AppConfig session and retrieve specific configuration data.
+In the Serverless Framework specification, `serverless.yml`, grant permission to the Lambda execution role to access specific AWS AppConfig data. The `serverless.yml` excerpt below illustrates the IAM role statements required to start a secure AWS AppConfig session and retrieve any configuration profile from a specific _Application_ and _Environment_. The `Resource` may be further contrained to specific configuration profiles if desired.
 
 ```yaml
 params:
@@ -36,7 +36,7 @@ provider:
             - appconfig:StartConfigurationSession
             - appconfig:GetLatestConfiguration
           Resource:
-            - arn:aws:appconfig:${aws:region}:${aws:accountId}:application/${param:appConfigAppId}/environment/${param:appConfigEnvId}/configuration/${param:appConfigProfileId}
+            - arn:aws:appconfig:${aws:region}:${aws:accountId}:application/${param:appConfigAppId}/environment/${param:appConfigEnvId}/configuration/*
 ```
 
 ### Step Two: Add the AWS AppConfig Agent
