@@ -1,14 +1,14 @@
-import { evaluateFlag } from './evaluate-flag';
-import { getConfiguration } from './get-configuration';
-import { getFlag } from './get-flag';
+import { isFlagEnabled } from './evaluate-flag';
+import { listFlags } from './flag-list';
+import { findFlagByKey } from './flag-find-by-key';
 
 /**
  * The AppConfigService encapsulates the AWS AppConfig configuration data.
  */
 const AppConfigService = {
-  evaluateFlag,
-  getConfiguration,
-  getFlag,
+  isFlagEnabled,
+  listFlags,
+  findFlagByKey,
 };
 
 export default AppConfigService;

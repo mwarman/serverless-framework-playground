@@ -11,7 +11,7 @@ import { EvaluateFlagDTO } from '@models/featureflag';
  *
  * Example cURL request:
  * ```
- * curl --location 'https://your.domain.com/dev/configs/oakibs7/flags/release-api-feature-customer' \
+ * curl --location 'https://your.domain.com/dev/flags/my-feature-flag-key' \
  *   --header 'Content-Type: application/json' \
  *   --data '{
  *     "customerId": "C000003"
@@ -32,12 +32,11 @@ export const handler = async (
   console.log(`context::${JSON.stringify(context, null, 2)}`);
 
   // handle request
-  const configId: string = event.pathParameters?.configId ?? '';
   const flagKey: string = event.pathParameters?.flagKey ?? '';
 
   const body = event.body as unknown as EvaluateFlagDTO;
 
-  const isFlagEnabled = await AppConfigService.evaluateFlag(configId, flagKey, {
+  const isFlagEnabled = await AppConfigService.isFlagEnabled(flagKey, {
     customerId: body.customerId,
   });
   console.log(`isFlagEnabled::${JSON.stringify(isFlagEnabled)}`);
@@ -45,6 +44,6 @@ export const handler = async (
   // format and return response
   return {
     statusCode: 200,
-    body: JSON.stringify({ configId, flagKey, enabled: isFlagEnabled }),
+    body: JSON.stringify({ flagKey, enabled: isFlagEnabled }),
   };
 };

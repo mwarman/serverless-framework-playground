@@ -3,12 +3,12 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda
 import AppConfigService from '@services/appconfig';
 
 /**
- * The find config handler receives API Gateway requests to fetch a single
- * AWS AppConfig configuration by the configuration profile identifier.
+ * The list flags handler receives API Gateway requests to fetch all flags
+ * from a single AWS AppConfig configuration.
  *
  * Example cURL request:
  * ```
- * curl --location 'https://your.domain.com/dev/configs/oakibs7'
+ * curl --location 'https://your.domain.com/dev/flags'
  * ```
  *
  * @param event - The request event.
@@ -20,21 +20,19 @@ export const handler = async (
   event: APIGatewayProxyEvent,
   context: Context,
 ): Promise<APIGatewayProxyResult> => {
-  console.log(`FindConfigHandler`);
+  console.log(`ListFlagsHandler`);
   console.log(`event::${JSON.stringify(event, null, 2)}`);
   console.log(`context::${JSON.stringify(context, null, 2)}`);
 
   // handle request
-  const configId: string = event.pathParameters?.configId ?? '';
-
-  const config = await AppConfigService.getConfiguration(configId);
-  console.log(`config::${JSON.stringify(config)}`);
+  const flags = await AppConfigService.listFlags();
+  console.log(`flags::${JSON.stringify(flags)}`);
 
   // format and return response
-  if (config) {
+  if (flags) {
     return {
       statusCode: 200,
-      body: JSON.stringify(config),
+      body: JSON.stringify(flags),
     };
   } else {
     // not found

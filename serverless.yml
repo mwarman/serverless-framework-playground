@@ -51,26 +51,26 @@ provider:
   environment:
     AWS_APPCONFIG_APP_ID: ${param:appConfigAppId}
     AWS_APPCONFIG_ENV_ID: ${param:appConfigEnvId}
-    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    AWS_APPCONFIG_PROFILE_ID: ${param:appConfigProfileId}
 
 functions:
   findConfig:
-    handler: src/handlers/config-find/index.handle
+    handler: src/handlers/flag-list/index.handle
     events:
       - http:
-          path: /configs/{configId}
+          path: /flags
           method: get
   findFlag:
     handler: src/handlers/flag-find/index.handle
     events:
       - http:
-          path: /configs/{configId}/flags/{flagKey}
+          path: /flags/{flagKey}
           method: get
   evaluateFlag:
     handler: src/handlers/flag-evaluate/index.handle
     events:
       - http:
-          path: /configs/{configId}/flags/{flagKey}
+          path: /flags/{flagKey}
           method: post
 
 resources:

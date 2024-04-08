@@ -9,7 +9,7 @@ import AppConfigService from '@services/appconfig';
  *
  * Example cURL request:
  * ```
- * curl --location 'https://your.domain.com/dev/configs/oakibs7/flags/release-api-feature-customer'
+ * curl --location 'https://your.domain.com/dev/flags/my-feature-flag-key'
  * ```
  *
  * @param event - The request event.
@@ -26,11 +26,10 @@ export const handler = async (
   console.log(`context::${JSON.stringify(context, null, 2)}`);
 
   // handle request
-  const configId: string = event.pathParameters?.configId ?? '';
   const flagKey: string = event.pathParameters?.flagKey ?? '';
 
-  const flag = await AppConfigService.getFlag(configId, flagKey);
-  console.log(`config::${JSON.stringify(flag)}`);
+  const flag = await AppConfigService.findFlagByKey(flagKey);
+  console.log(`flag::${JSON.stringify(flag)}`);
 
   // format and return response
   if (flag) {

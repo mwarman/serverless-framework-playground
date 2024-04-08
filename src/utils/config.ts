@@ -6,3 +6,8 @@ export const AWS_APPCONFIG_APP_ID = process.env.AWS_APPCONFIG_APP_ID ?? 'appconf
  * AWS AppConfig environment identifier.
  */
 export const AWS_APPCONFIG_ENV_ID = process.env.AWS_APPCONFIG_ENV_ID ?? 'appconfig-env-id';
+/**
+ * AWS AppConfig configuration profile identifier.
+ */
+export const AWS_APPCONFIG_PROFILE_ID =
+  process.env.AWS_APPCONFIG_PROFILE_ID ?? 'appconfig-profile-id';

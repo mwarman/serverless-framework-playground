@@ -4,7 +4,6 @@ import AppConfigService from '.';
 /**
  * Finds a single `FeatureFlag` by the flag `key` and evaluates the overall
  * flag state using the evaluation context attributes.
- * @param {string} configId - The configuration profile identifier.
  * @param {string} flagKey - The feature flag key.
  * @param {FeatureFlagEvaluationContext} [context] - Optional. An evaluation context.
  * @returns {Promise<boolean>} A Promise which resolves to the boolean state of
@@ -12,20 +11,17 @@ import AppConfigService from '.';
  * @throws Throws an `Error` when a failure occurs fetching the feature
  * flag.
  */
-export const evaluateFlag = async (
-  configId: string,
+export const isFlagEnabled = async (
   flagKey: string,
   context?: FeatureFlagEvaluationContext,
 ): Promise<boolean> => {
   try {
-    console.log(
-      `AppConfigService::evaluateFlag::${JSON.stringify({ configId, flagKey, context })}`,
-    );
+    console.log(`AppConfigService::isFlagEnabled`);
     // default to disabled
     let isEnabled = false;
 
     // fetch the feature flag configuration data
-    const flag = await AppConfigService.getFlag<CustomerAttributes>(configId, flagKey);
+    const flag = await AppConfigService.findFlagByKey<CustomerAttributes>(flagKey);
 
     if (flag) {
       // flag found
@@ -44,6 +40,7 @@ export const evaluateFlag = async (
       }
     }
 
+    console.log(`AppConfigService::isFlagEnabled::${isEnabled}`);
     return isEnabled;
   } catch (err) {
     console.error(`AppConfigService::error::Failed to evaluate feature flag ${flagKey}.`, err);
