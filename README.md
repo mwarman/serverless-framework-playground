@@ -50,15 +50,13 @@ The `serverless.yml` excerpt below illustrates adding the `layers` attribute to 
 ```yaml
 functions:
   ping:
-    handler: src/handlers/ping/index.handle
+    handler: src/handlers/flag-find/index.handle
     layers:
       - arn:aws:lambda:us-east-1:027255383542:layer:AWS-AppConfig-Extension:128
     events:
       - http:
-          path: /ping
+          path: /flags/{flagKey}
           method: get
-          cors:
-            origin: ${param:origins}
 ```
 
 ### Step Three: Add the AWS AppConfig configuration
@@ -97,7 +95,7 @@ provider:
 
 ### Step Four: Retrieve the feature flags
 
-The Lambda function handler, [handler.ts](./src/handlers/ping/handler.ts), uses the `AppConfigService` module to retrieve and log feature flag information to AWS CloudWatch logs.
+The Lambda function handler, [handler.ts](./src/handlers/flag-evaluate/handler.ts), illustrates using the `AppConfigService` module to retrieve and evaluate feature flag information.
 
 The `FeatureFlag` type is defined in [featureflag.ts](./src/models/featureflag.ts) as follows:
 
@@ -119,68 +117,13 @@ export type CustomerAttributes = {
 };
 ```
 
+By default an AWS AppConfig feature flag has a single boolean attribute, `enabled`. However, you may add your own custom attributes. This example illustrates a custom attribute, `customers`, which supplies an optional string array of customer identifiers. This attribute is used to further refine the flag enablement status.
+
 The project contains the `AppConfigService` module which includes functions to:
 
-- fetch an entire configuration profile
-- fetch a single feature flag
-- evaluate the state of a single feature flag, i.e. `true` or `false`, using context attributes
-
-In this example, each feature flag has an optional attribute named `customers` which is a `string[]` containing a list of customer identifiers for whom the flag is enabled. When the `customers` attribute is present on the feature flag, it is used to refine the evaluation of the feature flag.
-
-```ts
-import { CustomerAttributes, FeatureFlagEvaluationContext } from '@models/featureflag';
-import AppConfigService from '.';
-
-/**
- * Finds a single `FeatureFlag` by the flag `key` and evaluates the overall
- * flag state using the evaluation context attributes.
- * @param {string} configId - The configuration profile identifier.
- * @param {string} flagKey - The feature flag key.
- * @param {FeatureFlagEvaluationContext} [context] - Optional. An evaluation context.
- * @returns {Promise<boolean>} A Promise which resolves to the boolean state of
- * the feature flag.
- * @throws Throws an `Error` when a failure occurs fetching the feature
- * flag.
- */
-export const evaluateFlag = async (
-  configId: string,
-  flagKey: string,
-  context?: FeatureFlagEvaluationContext,
-): Promise<boolean> => {
-  try {
-    console.log(
-      `AppConfigService::evaluateFlag::${JSON.stringify({ configId, flagKey, context })}`,
-    );
-    // default to disabled
-    let isEnabled = false;
-
-    // fetch the feature flag configuration data
-    const flag = await AppConfigService.getFlag<CustomerAttributes>(configId, flagKey);
-
-    if (flag) {
-      // flag found
-      isEnabled = flag.enabled;
-      if (flag.enabled) {
-        // flag is enabled
-        if (context) {
-          // refine flag status with context attributes
-
-          // customer enabled if flag has no "customers" attribute OR
-          // the "customers" array contains the current customer identifier
-          const isCustomerEnabled = !flag.customers || flag.customers.includes(context.customerId);
-
-          isEnabled = isEnabled && isCustomerEnabled;
-        }
-      }
-    }
-
-    return isEnabled;
-  } catch (err) {
-    console.error(`AppConfigService::error::Failed to evaluate feature flag ${flagKey}.`, err);
-    throw err;
-  }
-};
-```
+- list all feature flags from an entire configuration profile
+- fetch a single feature flag by the flag key
+- evaluate the state of a single feature flag, i.e. `true` or `false`, using custom flag attributes
 
 ## Installation/deployment instructions
 
