@@ -1,4 +1,4 @@
-import { isFlagEnabled } from './evaluate-flag';
+import { isFlagEnabled } from './flag-enabled';
 import { listFlags } from './flag-list';
 import { findFlagByKey } from './flag-find-by-key';
 
