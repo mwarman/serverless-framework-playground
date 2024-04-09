@@ -1,3 +1,7 @@
+/**
+ * Indicates if the function is running offline.
+ * Environment variable set to "true" by the `serverless-offline` plugin.
+ */
 export const IS_OFFLINE = Boolean(process.env.IS_OFFLINE);
 /**
  * AWS AppConfig application identifier.

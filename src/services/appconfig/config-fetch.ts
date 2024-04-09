@@ -27,7 +27,8 @@ export const fetchConfig = async (): Promise<MultiFeatureFlag> => {
 
     if (IS_OFFLINE) {
       console.log('fetching AWS AppConfig data in OFFLINE mode');
-      // TODO: Load flags from file
+      // is offline
+      // use the configuration data from the local file
       return localFeatureFlags;
     } else {
       // is online, i.e. running in AWS
