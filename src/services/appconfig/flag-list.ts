@@ -1,40 +1,21 @@
-import axios from 'axios';
-
-import {
-  AWS_APPCONFIG_APP_ID,
-  AWS_APPCONFIG_ENV_ID,
-  AWS_APPCONFIG_PROFILE_ID,
-} from '@utils/config';
+import { MultiFeatureFlag } from '@models/featureflag';
+import { fetchConfig } from './config-fetch';
 
 /**
- * Retrieves the complete configuration profile containing the list of all
+ * Retrieves the complete configuration profile containing all
  * feature flags.
- * @returns {Promise<any>} A Promise which resolves to the list of feature flags.
+ * @returns {Promise<MultiFeatureFlag>} A Promise which resolves to a
+ * `MultiFeatureFlag` object.
  * @throws Throws an `Error` when a failure occurs retrieving the flags.
  */
-export const listFlags = async (): Promise<any> => {
+export const listFlags = async (): Promise<MultiFeatureFlag> => {
   try {
-    console.log(`AppConfigService::listFlags`);
-    console.log(
-      `AppConfigService::query::${JSON.stringify({
-        application: AWS_APPCONFIG_APP_ID,
-        environment: AWS_APPCONFIG_ENV_ID,
-        configurationProfile: AWS_APPCONFIG_PROFILE_ID,
-      })}`,
-    );
+    console.log('AppConfigService::listFlags');
 
     // fetch the configuration data
-    const url = `http://localhost:2772/applications/${AWS_APPCONFIG_APP_ID}/environments/${AWS_APPCONFIG_ENV_ID}/configurations/${AWS_APPCONFIG_PROFILE_ID}`;
-    console.log(`AppConfigService::url::${url}`);
-
-    const response = await axios.request<any>({
-      url,
-    });
-    console.log(`AppConfigService::response::${JSON.stringify(response.data, null, 2)}`);
-
-    return response.data;
+    return fetchConfig();
   } catch (err) {
-    console.error(`AppConfigService::error::Failed to fetch configuration.`, err);
+    console.error('AppConfigService::listFlags::Failed to fetch configuration.', err);
     return null;
   }
 };

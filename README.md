@@ -102,17 +102,9 @@ The `FeatureFlag` type is defined in [featureflag.ts](./src/models/featureflag.t
 ```ts
 /**
  * API response when a single AWS AppConfig feature flag is requested.
- * @template TAttr - The type of the feature flag attributes.
  */
-export type FeatureFlag<TAttr = unknown> = {
+export type FeatureFlag = {
   enabled: boolean;
-} & TAttr;
-
-/**
- * API AppConfig feature flag attributes for evaluation of feature flag status
- * based upon enabled customers.
- */
-export type CustomerAttributes = {
   customers?: string[];
 };
 ```

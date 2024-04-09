@@ -1,24 +1,17 @@
 /**
  * API response when a single AWS AppConfig feature flag is requested.
- * @template TAttr - The type of the feature flag attributes.
  */
-export type FeatureFlag<TAttr = unknown> = {
+export type FeatureFlag = {
   enabled: boolean;
-} & TAttr;
+  customers?: string[];
+};
 
 /**
  * API response when multiple AWS AppConfig feature flags are requested.
- * @template TAttr - The type of the feature flag attributes.
+ * An object whose keys are the feture flag key and whose values are the
+ * attributes of that flag.
  */
-export type MultiFeatureFlag<TAttr = unknown> = Record<string, FeatureFlag<TAttr>>;
-
-/**
- * API AppConfig feature flag attributes for evaluation of feature flag status
- * based upon enabled customers.
- */
-export type CustomerAttributes = {
-  customers?: string[];
-};
+export type MultiFeatureFlag = Record<string, FeatureFlag>;
 
 /**
  * A `FeatureFlagEvaluationContext` describes attributes considered when

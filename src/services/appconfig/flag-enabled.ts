@@ -1,4 +1,4 @@
-import { CustomerAttributes, FeatureFlagEvaluationContext } from '@models/featureflag';
+import { FeatureFlagEvaluationContext } from '@models/featureflag';
 import AppConfigService from '.';
 
 /**
@@ -21,7 +21,7 @@ export const isFlagEnabled = async (
     let isEnabled = false;
 
     // fetch the feature flag configuration data
-    const flag = await AppConfigService.findFlagByKey<CustomerAttributes>(flagKey);
+    const flag = await AppConfigService.findFlagByKey(flagKey);
 
     if (flag) {
       // flag found
@@ -43,7 +43,10 @@ export const isFlagEnabled = async (
     console.log(`AppConfigService::isFlagEnabled::${isEnabled}`);
     return isEnabled;
   } catch (err) {
-    console.error(`AppConfigService::error::Failed to evaluate feature flag ${flagKey}.`, err);
+    console.error(
+      `AppConfigService::isFlagEnabled::Failed to evaluate feature flag ${flagKey}.`,
+      err,
+    );
     throw err;
   }
 };

@@ -6,6 +6,7 @@ configValidationMode: error
 
 plugins:
   - serverless-esbuild
+  - serverless-offline
 
 params:
   default:
@@ -49,12 +50,13 @@ provider:
           Resource:
             - arn:aws:appconfig:${aws:region}:${aws:accountId}:application/${param:appConfigAppId}/environment/${param:appConfigEnvId}/configuration/*
   environment:
+    AWS_APPCONFIG_EXTENSION_POLL_INTERVAL_SECONDS: 120
     AWS_APPCONFIG_APP_ID: ${param:appConfigAppId}
     AWS_APPCONFIG_ENV_ID: ${param:appConfigEnvId}
     AWS_APPCONFIG_PROFILE_ID: ${param:appConfigProfileId}
 
 functions:
-  findConfig:
+  listFlags:
     handler: src/handlers/flag-list/index.handle
     events:
       - http:

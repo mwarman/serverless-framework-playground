@@ -1,3 +1,4 @@
+export const IS_OFFLINE = Boolean(process.env.IS_OFFLINE);
 /**
  * AWS AppConfig application identifier.
  */

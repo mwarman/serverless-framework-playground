@@ -6,6 +6,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "paths": {
+      "@data/*": ["./src/data/*"],
       "@fixtures/*":["./src/__fixtures__/*"],
       "@errors/*": ["./src/errors/*"],
       "@handlers/*": ["./src/handlers/*"],
