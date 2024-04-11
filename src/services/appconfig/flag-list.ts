@@ -13,7 +13,7 @@ export const listFlags = async (): Promise<MultiFeatureFlag> => {
     console.log('AppConfigService::listFlags');
 
     // fetch the configuration data
-    return fetchConfig();
+    return await fetchConfig();
   } catch (err) {
     console.error('AppConfigService::listFlags::Failed to fetch configuration.', err);
     return null;

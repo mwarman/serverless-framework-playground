@@ -20,4 +20,13 @@ describe('AppConfigService::listFlags', () => {
     expect(result.feature_flag_enabled).toBeDefined();
     expect(result.feature_flag_enabled.enabled).toBeTruthy();
   });
+
+  it('should return null when Error caught', async () => {
+    // ARRANGE
+    fetchConfigSpy.mockRejectedValueOnce(new Error('mock error'));
+    const result = await listFlags();
+
+    // ASSERT
+    expect(result).toBeNull();
+  });
 });
