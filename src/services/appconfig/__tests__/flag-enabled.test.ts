@@ -70,4 +70,14 @@ describe('AppConfigService::isFlagEnabled', () => {
     expect(findFlagByKeySpy).toHaveBeenCalledTimes(1);
     expect(result).toBe(false);
   });
+
+  it('should return false when an Error is caught', async () => {
+    // ARRANGE
+    findFlagByKeySpy.mockRejectedValueOnce(new Error('mock error'));
+    const result = await isFlagEnabled('feature_flag_enabled');
+
+    // ASSERT
+    expect(findFlagByKeySpy).toHaveBeenCalledTimes(1);
+    expect(result).toBe(false);
+  });
 });

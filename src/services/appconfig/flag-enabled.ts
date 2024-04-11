@@ -47,6 +47,6 @@ export const isFlagEnabled = async (
       `AppConfigService::isFlagEnabled::Failed to evaluate feature flag ${flagKey}.`,
       err,
     );
-    throw err;
+    return false;
   }
 };

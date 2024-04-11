@@ -4,33 +4,58 @@ import { featureFlagConfigFixture } from '@fixtures/flags';
 
 import { fetchConfig } from '../config-fetch';
 
-describe('AppConfigService::fetchConfig ONLINE', () => {
-  const axiosRequestSpy = jest.spyOn(axios, 'request');
+describe('AppConfigService::fetchConfig', () => {
+  describe('ONLINE', () => {
+    const axiosRequestSpy = jest.spyOn(axios, 'request');
 
-  beforeEach(() => {
-    axiosRequestSpy.mockResolvedValue({ data: featureFlagConfigFixture });
+    beforeEach(() => {
+      axiosRequestSpy.mockResolvedValue({ data: featureFlagConfigFixture });
+    });
+
+    it('should fetch configuration successfully', async () => {
+      // ARRANGE
+      const result = await fetchConfig();
+
+      // ASSERT
+      expect(axiosRequestSpy).toHaveBeenCalledTimes(1);
+      expect(result).toBeDefined();
+      expect(typeof result).toBe('object');
+      expect(result['feature_flag_enabled'].enabled).toBe(true);
+    });
+
+    it('should return empty object when Error caught', async () => {
+      // ARRANGE
+      axiosRequestSpy.mockRejectedValue(new Error('mock error'));
+      const result = await fetchConfig();
+
+      // ASSERT
+      expect(axiosRequestSpy).toHaveBeenCalledTimes(1);
+      expect(result).toBeDefined();
+      expect(typeof result).toBe('object');
+      expect(Object.keys(result).length).toBe(0);
+    });
   });
 
-  it('should fetch configuration successfully', async () => {
-    // ARRANGE
-    const result = await fetchConfig();
+  describe('OFFLINE', () => {
+    const axiosRequestSpy = jest.spyOn(axios, 'request');
+    const originalEnv = process.env;
 
-    // ASSERT
-    expect(axiosRequestSpy).toHaveBeenCalledTimes(1);
-    expect(result).toBeDefined();
-    expect(typeof result).toBe('object');
-    expect(result['feature_flag_enabled'].enabled).toBe(true);
-  });
+    beforeAll(() => {
+      process.env = { IS_OFFLINE: 'false' };
+    });
 
-  it('should return empty object when Error caught', async () => {
-    // ARRANGE
-    axiosRequestSpy.mockRejectedValue(new Error('mock error'));
-    const result = await fetchConfig();
+    afterAll(() => {
+      process.env = originalEnv;
+    });
 
-    // ASSERT
-    expect(axiosRequestSpy).toHaveBeenCalledTimes(1);
-    expect(result).toBeDefined();
-    expect(typeof result).toBe('object');
-    expect(Object.keys(result).length).toBe(0);
+    it.skip('should fetch configuration successfully', async () => {
+      // ARRANGE
+      const result = await fetchConfig();
+
+      // ASSERT
+      expect(axiosRequestSpy).not.toHaveBeenCalled();
+      expect(result).toBeDefined();
+      expect(typeof result).toBe('object');
+    });
   });
 });
