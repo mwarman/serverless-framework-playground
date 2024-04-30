@@ -48,9 +48,10 @@ provider:
             - appconfig:StartConfigurationSession
             - appconfig:GetLatestConfiguration
           Resource:
-            - arn:aws:appconfig:${aws:region}:${aws:accountId}:application/${param:appConfigAppId}/environment/${param:appConfigEnvId}/configuration/*
+            - arn:aws:appconfig:*:${aws:accountId}:application/${param:appConfigAppId}/environment/${param:appConfigEnvId}/configuration/*
   environment:
     AWS_APPCONFIG_EXTENSION_POLL_INTERVAL_SECONDS: 120
+    AWS_APPCONFIG_EXTENSION_SERVICE_REGION: us-east-1
     AWS_APPCONFIG_APP_ID: ${param:appConfigAppId}
     AWS_APPCONFIG_ENV_ID: ${param:appConfigEnvId}
     AWS_APPCONFIG_PROFILE_ID: ${param:appConfigProfileId}
