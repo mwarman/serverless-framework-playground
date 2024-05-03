@@ -12,6 +12,12 @@ const featureFlags: MultiFeatureFlag = {
     enabled: true,
     customers: ['C000001', 'C000002'],
   },
+  'release-feature-three': {
+    enabled: true,
+  },
+  'release-feature-four': {
+    enabled: false,
+  },
 };
 
 export default featureFlags;

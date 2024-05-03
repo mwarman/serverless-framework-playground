@@ -1,4 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import flatten from 'lodash/flatten';
+import map from 'lodash/map';
+import split from 'lodash/split';
 
 import AppConfigService from '@services/appconfig';
 
@@ -23,6 +26,13 @@ export const handler = async (
   console.log(`ListFlagsHandler`);
   console.log(`event::${JSON.stringify(event, null, 2)}`);
   console.log(`context::${JSON.stringify(context, null, 2)}`);
+
+  const keys: string[] = flatten(
+    map<string, string[]>(event.multiValueQueryStringParameters.key, (key: string) =>
+      split(key, ','),
+    ),
+  );
+  console.log(`keys::${JSON.stringify(keys)}`);
 
   // handle request
   const flags = await AppConfigService.listFlags();
